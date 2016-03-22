@@ -64,7 +64,7 @@
             <EditText
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:inputType="numberSigned"
+                android:inputType="numberDecimal"
                 android:ems="10"
                 android:id="@+id/downPaymentPercentage"
                 android:layout_column="8" />
@@ -87,7 +87,6 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Mortgage term:"
-                android:id="@+id/mortgageTerm"
                 android:layout_column="1" />
 
             <EditText
@@ -95,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="numberSigned"
                 android:ems="10"
-                android:id="@+id/editText3"
+                android:id="@+id/mortgageTerm"
                 android:layout_column="8" />
 
             <TextView
@@ -116,15 +115,14 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Interest rate:"
-                android:id="@+id/interestRate"
                 android:layout_column="1" />
 
             <EditText
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:ems="10"
-                android:id="@+id/editText4"
+                android:id="@+id/interestRate"
                 android:layout_column="8" />
 
             <TextView
@@ -145,15 +143,14 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Property tax:"
-                android:id="@+id/propertyTax"
                 android:layout_column="1" />
 
             <EditText
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:inputType="numberSigned"
+                android:inputType="numberDecimal"
                 android:ems="10"
-                android:id="@+id/editText5"
+                android:id="@+id/propertyTax"
                 android:layout_column="8" />
 
             <TextView
@@ -181,9 +178,9 @@
             <EditText
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:inputType="numberSigned"
+                android:inputType="numberDecimal"
                 android:ems="10"
-                android:id="@+id/editText6"
+                android:id="@+id/propertyInsurance"
                 android:layout_column="8" />
 
             <TextView
@@ -234,7 +231,6 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="ZIP Code:"
-                android:id="@+id/textView9"
                 android:layout_column="1" />
 
             <EditText
@@ -242,7 +238,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="numberSigned"
                 android:ems="10"
-                android:id="@+id/editText8"
+                android:id="@+id/ZIPCode"
                 android:layout_column="8" />
         </TableRow>
 

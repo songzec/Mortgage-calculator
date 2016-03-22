@@ -21,7 +21,9 @@ public class MainActivity extends AppCompatActivity {
     private static String[] years;
     private Spinner monthSpinner, yearSpinner;
     private Button calculatorButton;
-    private TextView resultTextView, purchasePriceTextView, downPaymentPriceTextView, downPaymentPercentageTextView;
+    private TextView resultTextView, purchasePriceTextView, downPaymentPriceTextView,
+                        downPaymentPercentageTextView, mortgageTermTextView, interestRateTextView,
+                        propertyTaxTextView, propertyInsuranceTextView, ZIPCodeTextView;
     private TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -59,6 +61,11 @@ public class MainActivity extends AppCompatActivity {
         purchasePriceTextView = (TextView) findViewById(R.id.purchasePrice);
         downPaymentPriceTextView = (TextView) findViewById(R.id.downPaymentNumber);
         downPaymentPercentageTextView = (TextView) findViewById(R.id.downPaymentPercentage);
+        mortgageTermTextView = (TextView) findViewById(R.id.mortgageTerm);
+        interestRateTextView = (TextView) findViewById(R.id.interestRate);
+        propertyTaxTextView = (TextView) findViewById(R.id.propertyTax);
+        propertyInsuranceTextView = (TextView) findViewById(R.id.propertyInsurance);
+        ZIPCodeTextView = (TextView) findViewById(R.id.ZIPCode);
         purchasePriceTextView.addTextChangedListener(textWatcher);
         downPaymentPercentageTextView.addTextChangedListener(textWatcher);
 
@@ -74,13 +81,34 @@ public class MainActivity extends AppCompatActivity {
                 years);
         yearSpinner.setAdapter(yearAdapter);
 
-
+        if (savedInstanceState == null) {
+            purchasePriceTextView.setText("300000");
+            downPaymentPercentageTextView.setText("20");
+            mortgageTermTextView.setText("30");
+            interestRateTextView.setText("4.5");
+            propertyTaxTextView.setText("3000");
+            propertyInsuranceTextView.setText("1500");
+            ZIPCodeTextView.setText("15213");
+            monthSpinner.setSelection(2);
+            yearSpinner.setSelection(15);
+        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         calculatorButton = (Button)findViewById(R.id.button);
         calculatorButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-                resultTextView.setText(purchasePriceTextView.getText());
+                try {
+                    int loanAmount = (int) (Integer.parseInt(purchasePriceTextView.getText().toString()) * (1 - Double.parseDouble(downPaymentPercentageTextView.getText().toString()) / 100));
+                    int termInYears = Integer.parseInt(mortgageTermTextView.getText().toString());
+                    double interestRate = Double.parseDouble(interestRateTextView.getText().toString());
+                    double propertyTax = Double.parseDouble(propertyTaxTextView.getText().toString());
+                    double propertyInsurance = Double.parseDouble(propertyInsuranceTextView.getText().toString());
+                    Double monthlyPayment = calculateMonthlyPayment(loanAmount, termInYears, interestRate);
+                    monthlyPayment = monthlyPayment + (propertyTax + propertyInsurance) / 12;
+                    resultTextView.setText(monthlyPayment.toString());
+                } catch (NumberFormatException e) {
+                    resultTextView.setText("Wrong Number Format");
+                }
             }
         });
     }
@@ -105,5 +133,36 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private double calculateMonthlyPayment(
+            int loanAmount, int termInYears, double interestRate) {
+
+        // Convert interest rate into a decimal
+        // eg. 6.5% = 0.065
+
+        interestRate /= 100.0;
+
+        // Monthly interest rate
+        // is the yearly rate divided by 12
+
+        double monthlyRate = interestRate / 12.0;
+
+        // The length of the term in months
+        // is the number of years times 12
+
+        int termInMonths = termInYears * 12;
+
+        // Calculate the monthly payment
+        // Typically this formula is provided so
+        // we won't go into the details
+
+        // The Math.pow() method is used calculate values raised to a power
+
+        double monthlyPayment =
+                (loanAmount*monthlyRate) /
+                        (1-Math.pow(1+monthlyRate, -termInMonths));
+
+        return monthlyPayment;
     }
 }
