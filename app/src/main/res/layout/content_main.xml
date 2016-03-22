@@ -31,7 +31,6 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Purchase price:"
-                android:id="@+id/purchasePrice"
                 android:layout_column="1" />
 
             <EditText
@@ -39,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="numberSigned"
                 android:ems="10"
-                android:id="@+id/editText"
+                android:id="@+id/purchasePrice"
                 android:layout_column="8" />
 
             <TextView
@@ -60,7 +59,6 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Down payment:"
-                android:id="@+id/downPayment"
                 android:layout_column="1" />
 
             <EditText
@@ -68,15 +66,15 @@
                 android:layout_height="wrap_content"
                 android:inputType="numberSigned"
                 android:ems="10"
-                android:id="@+id/editText2"
+                android:id="@+id/downPaymentPercentage"
                 android:layout_column="8" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="%"
-                android:id="@+id/textView"
+                android:text="%($NaN)"
+                android:id="@+id/downPaymentNumber"
                 android:layout_column="9" />
         </TableRow>
 
@@ -295,6 +293,14 @@
                 android:layout_height="wrap_content"
                 android:text="Calculate"
                 android:id="@+id/button"
+                android:layout_column="1" />
+
+            <EditText
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/resultTextView"
                 android:layout_column="8" />
         </TableRow>
 

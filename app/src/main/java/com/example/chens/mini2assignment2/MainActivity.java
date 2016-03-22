@@ -5,17 +5,42 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String[] months = {"January","February","March","April","May","June",
-                                            "July","August","September","October","November","December"};
+    private static final String[] months = {"Jan","Feb","Mar","Apr","May","Jun",
+                                            "Jul","Aug","Sep","Oct","Nov","Dec"};
     private static String[] years;
     private Spinner monthSpinner, yearSpinner;
+    private Button calculatorButton;
+    private TextView resultTextView, purchasePriceTextView, downPaymentPriceTextView, downPaymentPercentageTextView;
+    private TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            try  {
+                int downPaymentPrice = Integer.parseInt(purchasePriceTextView.getText().toString())
+                        * Integer.parseInt(downPaymentPercentageTextView.getText().toString()) / 100;
+                String text = "%($" + downPaymentPrice + ")";
+                downPaymentPriceTextView.setText(text);
+            } catch (NumberFormatException e){
+                String text = "%($NaN)";
+            }
+        }
+        @Override
+        public void afterTextChanged(Editable s) {
+        }
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+    };
     private void createYear() {
         years = new String[31];
         for (int i = 2001; i <= 2031; i++) {
@@ -30,27 +55,32 @@ public class MainActivity extends AppCompatActivity {
 
         monthSpinner = (Spinner) findViewById(R.id.monthspinner);
         yearSpinner = (Spinner) findViewById(R.id.yearspinner);
+        resultTextView = (TextView) findViewById(R.id.resultTextView);
+        purchasePriceTextView = (TextView) findViewById(R.id.purchasePrice);
+        downPaymentPriceTextView = (TextView) findViewById(R.id.downPaymentNumber);
+        downPaymentPercentageTextView = (TextView) findViewById(R.id.downPaymentPercentage);
+        purchasePriceTextView.addTextChangedListener(textWatcher);
+        downPaymentPercentageTextView.addTextChangedListener(textWatcher);
 
         ArrayAdapter<String> monthAdapter = new ArrayAdapter<String>(
                 MainActivity.this,
-                android.R.layout.test_list_item, months);
+                android.R.layout.test_list_item,
+                months);
         monthSpinner.setAdapter(monthAdapter);
 
         ArrayAdapter<String> yearAdapter = new ArrayAdapter<String>(
                 MainActivity.this,
-                android.R.layout.test_list_item, years);
+                android.R.layout.test_list_item,
+                years);
         yearSpinner.setAdapter(yearAdapter);
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-       FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+        calculatorButton = (Button)findViewById(R.id.button);
+        calculatorButton.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                resultTextView.setText(purchasePriceTextView.getText());
             }
         });
     }
