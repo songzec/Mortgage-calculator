@@ -209,7 +209,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="numberSigned"
                 android:ems="10"
-                android:id="@+id/editText7"
+                android:id="@+id/PMI"
                 android:layout_column="8"
                 android:text="0.52" />
 

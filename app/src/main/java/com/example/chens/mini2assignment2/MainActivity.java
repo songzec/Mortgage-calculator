@@ -1,5 +1,9 @@
 package com.example.chens.mini2assignment2;
 
+/**
+ * Created by chens on 2016/3/21.
+ */
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -23,7 +27,8 @@ public class MainActivity extends AppCompatActivity {
     private Button calculatorButton;
     private TextView resultTextView, purchasePriceTextView, downPaymentPriceTextView,
                         downPaymentPercentageTextView, mortgageTermTextView, interestRateTextView,
-                        propertyTaxTextView, propertyInsuranceTextView, ZIPCodeTextView;
+                        propertyTaxTextView, propertyInsuranceTextView, PMITextView, ZIPCodeTextView;
+    private DataBase db;
     private TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -54,10 +59,8 @@ public class MainActivity extends AppCompatActivity {
         createYear();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        db = new DataBase(MainActivity.this);
 
-        monthSpinner = (Spinner) findViewById(R.id.monthspinner);
-        yearSpinner = (Spinner) findViewById(R.id.yearspinner);
-        resultTextView = (TextView) findViewById(R.id.resultTextView);
         purchasePriceTextView = (TextView) findViewById(R.id.purchasePrice);
         downPaymentPriceTextView = (TextView) findViewById(R.id.downPaymentNumber);
         downPaymentPercentageTextView = (TextView) findViewById(R.id.downPaymentPercentage);
@@ -65,7 +68,12 @@ public class MainActivity extends AppCompatActivity {
         interestRateTextView = (TextView) findViewById(R.id.interestRate);
         propertyTaxTextView = (TextView) findViewById(R.id.propertyTax);
         propertyInsuranceTextView = (TextView) findViewById(R.id.propertyInsurance);
+        PMITextView = (TextView) findViewById(R.id.PMI);
         ZIPCodeTextView = (TextView) findViewById(R.id.ZIPCode);
+        monthSpinner = (Spinner) findViewById(R.id.monthspinner);
+        yearSpinner = (Spinner) findViewById(R.id.yearspinner);
+        resultTextView = (TextView) findViewById(R.id.resultTextView);
+
         purchasePriceTextView.addTextChangedListener(textWatcher);
         downPaymentPercentageTextView.addTextChangedListener(textWatcher);
 
@@ -81,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 years);
         yearSpinner.setAdapter(yearAdapter);
 
+        /* setting defualt value */
         if (savedInstanceState == null) {
             purchasePriceTextView.setText("300000");
             downPaymentPercentageTextView.setText("20");
@@ -98,15 +107,44 @@ public class MainActivity extends AppCompatActivity {
         calculatorButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 try {
-                    int loanAmount = (int) (Integer.parseInt(purchasePriceTextView.getText().toString()) * (1 - Double.parseDouble(downPaymentPercentageTextView.getText().toString()) / 100));
+
+                    int purchasedPrice = Integer.parseInt(purchasePriceTextView.getText().toString());
+                    double downPaymentPercentage = Double.parseDouble(downPaymentPercentageTextView.getText().toString());
                     int termInYears = Integer.parseInt(mortgageTermTextView.getText().toString());
                     double interestRate = Double.parseDouble(interestRateTextView.getText().toString());
                     double propertyTax = Double.parseDouble(propertyTaxTextView.getText().toString());
                     double propertyInsurance = Double.parseDouble(propertyInsuranceTextView.getText().toString());
-                    Double monthlyPayment = calculateMonthlyPayment(loanAmount, termInYears, interestRate);
-                    monthlyPayment = monthlyPayment + (propertyTax + propertyInsurance) / 12;
-                    resultTextView.setText(monthlyPayment.toString());
+                    double PMI = Double.parseDouble(PMITextView.getText().toString());
+                    int ZIPCode = Integer.parseInt(ZIPCodeTextView.getText().toString());
+                    String month = monthSpinner.getSelectedItem().toString();
+                    int year = Integer.parseInt(yearSpinner.getSelectedItem().toString());
+
+                    Mortgage mortgage = new Mortgage();
+                    mortgage.setPurchasedPrice(purchasedPrice);
+                    mortgage.setDownPaymentPercentage(downPaymentPercentage);
+                    mortgage.setTermInYears(termInYears);
+                    mortgage.setInterestRate(interestRate);
+                    mortgage.setPropertyTax(propertyTax);
+                    mortgage.setPropertyInsurance(propertyInsurance);
+                    mortgage.setPMI(PMI);
+                    mortgage.setZIPCode(ZIPCode);
+                    mortgage.setMonth(month);
+                    mortgage.setYear(year);
+                    mortgage.calculateMonthlyPayment();
+
+                    db.insertMortgage(mortgage);
+                    resultTextView.setText(mortgage.monthlyPaymentToString());
+                    db.open();
+                    Cursor c = db.getAllMortgage();
+                    int count = c.getCount();
+                    for (int i = 0; i < count; i++) {
+                        c.moveToNext();
+                        System.out.println(c.getString(2));
+
+                    }
+                    db.close();
                 } catch (NumberFormatException e) {
+                    e.printStackTrace();
                     resultTextView.setText("Wrong Number Format");
                 }
             }
@@ -133,36 +171,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private double calculateMonthlyPayment(
-            int loanAmount, int termInYears, double interestRate) {
-
-        // Convert interest rate into a decimal
-        // eg. 6.5% = 0.065
-
-        interestRate /= 100.0;
-
-        // Monthly interest rate
-        // is the yearly rate divided by 12
-
-        double monthlyRate = interestRate / 12.0;
-
-        // The length of the term in months
-        // is the number of years times 12
-
-        int termInMonths = termInYears * 12;
-
-        // Calculate the monthly payment
-        // Typically this formula is provided so
-        // we won't go into the details
-
-        // The Math.pow() method is used calculate values raised to a power
-
-        double monthlyPayment =
-                (loanAmount*monthlyRate) /
-                        (1-Math.pow(1+monthlyRate, -termInMonths));
-
-        return monthlyPayment;
     }
 }
